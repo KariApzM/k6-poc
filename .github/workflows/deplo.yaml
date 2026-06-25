@@ -83,9 +83,9 @@ jobs:
             "echo '\''echo \"Todos los tests completados\"'\'' >> /tmp/run-k6.sh",
             "chmod +x /tmp/run-k6.sh",
             "chown ec2-user:ec2-user /tmp/run-k6.sh",
-            "echo '===== CONTENIDO DE run-k6.sh ====='",
+            "echo '\''===== CONTENIDO DE run-k6.sh ====='\''",
             "cat /tmp/run-k6.sh",
-            "echo '===== FIN DEL SCRIPT ====='",
+            "echo '\''===== FIN DEL SCRIPT ====='\''",
             "sudo -u ec2-user bash /tmp/run-k6.sh",
             "rm -f /tmp/run-k6.sh"
             ]'
