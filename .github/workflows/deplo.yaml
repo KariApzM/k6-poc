@@ -53,6 +53,7 @@ jobs:
             "chown -R ec2-user:ec2-user /home/ec2-user/k6-results/${REPOSITORY_NAME}",
             "SECRET_NAME=${SECRET_NAME}",
             "echo SECRET_NAME=${SECRET_NAME}",
+            "echo BUCKET_NAME=${BUCKET_NAME}",
             "SECRETS=$(aws secretsmanager get-secret-value --secret-id ${SECRET_NAME} --query SecretString --output text --region us-east-1)",
             "echo \"$SECRETS\" | jq -r \"to_entries | .[] | \\\"\\(.key)=\\(.value)\\\"\" > /home/ec2-user/$REPOSITORY_NAME/.env",
             "cat /dev/null > /tmp/run-k6.sh",
