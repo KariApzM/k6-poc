@@ -42,6 +42,8 @@ jobs:
           PARAM_BRANCH: ${{ github.event.inputs.branch }}
           PARAM_TEST_TYPE: ${{ github.event.inputs.test_type }}
         run: |
+          SECRET_NAME=qa-keys
+          BUCKET_NAME=s3-demo-kari
           aws ssm send-command \
             --instance-ids $INSTANCE_ID \
             --document-name "AWS-RunShellScript" \
