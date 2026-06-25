@@ -62,7 +62,9 @@ jobs:
             "echo '\''S3_BASE=s3://${BUCKET_NAME}/${REPOSITORY_NAME}/${TEST_TYPE}/${TIMESTAMP}'\'' >> /tmp/run-k6.sh",
             "echo '\''cd ${BASE_DIR} && git pull origin ${BRANCH}'\'' >> /tmp/run-k6.sh",
             "echo '\''SECRETS=$(aws secretsmanager get-secret-value --secret-id ${SECRET_NAME} --query SecretString --output text --region us-east-1)'\'' >> /tmp/run-k6.sh",
-            "echo '\''echo \"$SECRETS\" | jq -r '\''to_entries | .[] | \"\\(.key)=\\(.value)\"'\'' > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
+            "cat <<'EOF' >> /tmp/run-k6.sh",
+            "echo \"$SECRETS\" | jq -r 'to_entries | .[] | \"\\(.key)=\\(.value)\"' > ${BASE_DIR}/.env",
+            "EOF",
             "echo '\''set -a'\'' >> /tmp/run-k6.sh",
             "echo '\''source ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set +a'\'' >> /tmp/run-k6.sh",
@@ -83,9 +85,6 @@ jobs:
             "echo '\''echo \"Todos los tests completados\"'\'' >> /tmp/run-k6.sh",
             "chmod +x /tmp/run-k6.sh",
             "chown ec2-user:ec2-user /tmp/run-k6.sh",
-            "echo '\''===== CONTENIDO DE run-k6.sh ====='\''",
-            "cat /tmp/run-k6.sh",
-            "echo '\''===== FIN DEL SCRIPT ====='\''",
             "sudo -u ec2-user bash /tmp/run-k6.sh",
             "rm -f /tmp/run-k6.sh"
             ]'
