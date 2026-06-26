@@ -65,7 +65,6 @@ jobs:
             "echo '\''S3_BASE=s3://${BUCKET_NAME}/${REPOSITORY_NAME}/${TEST_TYPE}/${TIMESTAMP}'\'' >> /tmp/run-k6.sh",
             "echo '\''if [ ! -d \"${BASE_DIR}/.git\" ]; then'\'' >> /tmp/run-k6.sh",
             "echo '\''  git clone https://github.com/${{ github.repository }}.git ${BASE_DIR}'\'' >> /tmp/run-k6.sh",
-            "echo '\''  git checkout ${BRANCH}'\'' >> /tmp/run-k6.sh",
             "echo '\''else'\'' >> /tmp/run-k6.sh",
             "echo '\''  cd ${BASE_DIR}'\'' >> /tmp/run-k6.sh",
             "echo '\''  git checkout ${BRANCH} && git pull origin ${BRANCH}'\'' >> /tmp/run-k6.sh",
