@@ -44,6 +44,7 @@ jobs:
           SECRET_NAME: qa-keys
           BUCKET_NAME: s3-demo-kari
           REPOSITORY_NAME: ${{ github.event.repository.name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           aws ssm send-command \
             --instance-ids $INSTANCE_ID \
@@ -60,12 +61,13 @@ jobs:
             "echo '\''BRANCH='$PARAM_BRANCH''\'' >> /tmp/run-k6.sh",
             "echo '\''TEST_TYPE='$PARAM_TEST_TYPE''\'' >> /tmp/run-k6.sh",
             "echo '\''REPOSITORY_NAME='$REPOSITORY_NAME''\'' >> /tmp/run-k6.sh",
+            "echo '\''GITHUB_REPOSITORY='$GITHUB_REPOSITORY''\'' >> /tmp/run-k6.sh",
             "echo '\''BASE_DIR=/home/ec2-user/'$REPOSITORY_NAME''\'' >> /tmp/run-k6.sh",
             "echo '\''RESULTS_DIR=/home/ec2-user/k6-results/${REPOSITORY_NAME}/${TEST_TYPE}/${TIMESTAMP}'\'' >> /tmp/run-k6.sh",
             "echo '\''mkdir -p ${RESULTS_DIR}'\'' >> /tmp/run-k6.sh",
             "echo '\''S3_BASE=s3://${BUCKET_NAME}/${REPOSITORY_NAME}/${TEST_TYPE}/${TIMESTAMP}'\'' >> /tmp/run-k6.sh",
             "echo '\''if [ ! -d \"${BASE_DIR}/.git\" ]; then'\'' >> /tmp/run-k6.sh",
-            "echo '\''  git clone https://github.com/${{ github.repository }}.git ${BASE_DIR}'\'' >> /tmp/run-k6.sh",
+            "echo '\''  git clone https://github.com/${GITHUB_REPOSITORY}.git ${BASE_DIR}'\'' >> /tmp/run-k6.sh",
             "echo '\''else'\'' >> /tmp/run-k6.sh",
             "echo '\''  cd ${BASE_DIR}'\'' >> /tmp/run-k6.sh",
             "echo '\''  git checkout ${BRANCH} && git pull origin ${BRANCH}'\'' >> /tmp/run-k6.sh",
