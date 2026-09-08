@@ -42,6 +42,7 @@ jobs:
           PARAM_BRANCH: ${{ github.event.inputs.branch }}
           PARAM_TEST_TYPE: ${{ github.event.inputs.test_type }}
           SECRET_NAME: qa-keys
+          INFLUXDB_SECRET_NAME: qa-keys-influxdb
           BUCKET_NAME: s3-demo-kari
           REPOSITORY_NAME: ${{ github.event.repository.name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -76,11 +77,11 @@ jobs:
             "echo '\''SECRETS=$(aws secretsmanager get-secret-value --secret-id ${SECRET_NAME} --query SecretString --output text --region us-east-2)'\'' >> /tmp/run-k6.sh",
             "echo '\''echo \"$SECRETS\" | jq -r \"to_entries | .[] | \\\"\\(.key)=\\(.value)\\\"\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''K6_INFLUXDB_ADD=$(echo \"$SECRETS\" | jq -r \".K6_INFLUXDB_ADD\")'\'' >> /tmp/run-k6.sh",
-            "echo '\''echo \"K6_INFLUXDB_ADD=${K6_INFLUXDB_ADD}\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
+            "echo '\''K6_INFLUXDB_ADD=$K6_INFLUXDB_ADD > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''INFLUXDB_SECRET_NAME='$INFLUXDB_SECRET_NAME''\'' >> /tmp/run-k6.sh",
             "echo '\''INFLUXDB_SECRET=$(aws secretsmanager get-secret-value --secret-id ${INFLUXDB_SECRET_NAME} --query SecretString --output text --region us-east-2)'\'' >> /tmp/run-k6.sh",
             "echo '\''INFLUXDB_TOKEN=$(echo \"$INFLUXDB_SECRET\" | jq -r \".token\")'\'' >> /tmp/run-k6.sh",
-            "echo '\''echo \"K6_INFLUXDB_TOKEN=${INFLUXDB_TOKEN}\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
+            "echo '\''K6_INFLUXDB_TOKEN=$INFLUXDB_TOKEN > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set -a'\'' >> /tmp/run-k6.sh",
             "echo '\''source ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set +a'\'' >> /tmp/run-k6.sh",
@@ -89,7 +90,7 @@ jobs:
             "echo '\''  local TYPE=$1'\'' >> /tmp/run-k6.sh",
             "echo '\''  echo \"Running tests of type: TEST_TYPE=${TYPE}\"'\'' >> /tmp/run-k6.sh",
             "echo '\''  k6 run src/main.js -e TEST_TYPE=${TYPE} --out csv=${RESULTS_DIR}/results-${TYPE}.csv --summary-export=${RESULTS_DIR}/summary-${TYPE}.json 2>&1 | tee ${RESULTS_DIR}/logs-${TYPE}.log'\'' >> /tmp/run-k6.sh",
-            "echo '\''  aws s3 cp --recursive ${RESULTS_DIR}/ $S3_BASE/'\'' >> /tmp/run-k6.sh",
+            "echo '\''  aws s3 cp --recursive --region us-east-1 ${RESULTS_DIR}/ $S3_BASE/'\'' >> /tmp/run-k6.sh",
             "echo '\''  echo \"${TYPE} uploaded to S3\"'\'' >> /tmp/run-k6.sh",
             "echo '\''}'\'' >> /tmp/run-k6.sh",
             "echo '\''if [[ \"${TEST_TYPE}\" = \"all\" ]]; then'\'' >> /tmp/run-k6.sh",
