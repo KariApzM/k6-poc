@@ -43,7 +43,7 @@ jobs:
           PARAM_TEST_TYPE: ${{ github.event.inputs.test_type }}
           SECRET_NAME: qa-keys
           INFLUXDB_SECRET_NAME: qa-keys-influxdb
-          BUCKET_NAME: s3-demo-kari
+          BUCKET_NAME: s3-demo-kari-k6
           REPOSITORY_NAME: ${{ github.event.repository.name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
@@ -85,7 +85,6 @@ jobs:
             "echo '\''set -a'\'' >> /tmp/run-k6.sh",
             "echo '\''source ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set +a'\'' >> /tmp/run-k6.sh",
-            "echo '\''cat ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''run_tests() {'\'' >> /tmp/run-k6.sh",
             "echo '\''  local TYPE=$1'\'' >> /tmp/run-k6.sh",
             "echo '\''  echo \"Running tests of type: TEST_TYPE=${TYPE}\"'\'' >> /tmp/run-k6.sh",
