@@ -75,9 +75,16 @@ jobs:
             "echo '\''SECRET_NAME='$SECRET_NAME''\'' >> /tmp/run-k6.sh",
             "echo '\''SECRETS=$(aws secretsmanager get-secret-value --secret-id ${SECRET_NAME} --query SecretString --output text --region us-east-1)'\'' >> /tmp/run-k6.sh",
             "echo '\''echo \"$SECRETS\" | jq -r \"to_entries | .[] | \\\"\\(.key)=\\(.value)\\\"\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
+            "echo '\''K6_INFLUXDB_ADD=$(echo \"$SECRETS\" | jq -r \".K6_INFLUXDB_ADD\")'\'' >> /tmp/run-k6.sh",
+            "echo '\''echo \"K6_INFLUXDB_ADD=${K6_INFLUXDB_ADD}\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
+            "echo '\''INFLUXDB_SECRET_NAME='$INFLUXDB_SECRET_NAME''\'' >> /tmp/run-k6.sh",
+            "echo '\''INFLUXDB_SECRET=$(aws secretsmanager get-secret-value --secret-id ${INFLUXDB_SECRET_NAME} --query SecretString --output text --region us-east-1)'\'' >> /tmp/run-k6.sh",
+            "echo '\''INFLUXDB_TOKEN=$(echo \"$INFLUXDB_SECRET\" | jq -r \".token\")'\'' >> /tmp/run-k6.sh",
+            "echo '\''echo \"K6_INFLUXDB_TOKEN=${INFLUXDB_TOKEN}\" > ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set -a'\'' >> /tmp/run-k6.sh",
             "echo '\''source ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''set +a'\'' >> /tmp/run-k6.sh",
+            "echo '\''cat ${BASE_DIR}/.env'\'' >> /tmp/run-k6.sh",
             "echo '\''run_tests() {'\'' >> /tmp/run-k6.sh",
             "echo '\''  local TYPE=$1'\'' >> /tmp/run-k6.sh",
             "echo '\''  echo \"Running tests of type: TEST_TYPE=${TYPE}\"'\'' >> /tmp/run-k6.sh",
@@ -96,6 +103,5 @@ jobs:
             "chmod +x /tmp/run-k6.sh",
             "chown ec2-user:ec2-user /tmp/run-k6.sh",
             "sudo -u ec2-user bash /tmp/run-k6.sh",
-            "rm -f /tmp/run-k6.sh",
-            "rm -f /home/ec2-user/${REPOSITORY_NAME}/.env"
+            "rm -f /tmp/run-k6.sh"
             ]'
